@@ -1,14 +1,14 @@
 import React from 'react';
 import {StyleSheet, Text, TouchableOpacity} from 'react-native';
 
-const RandomNumber = ({ randomNum }) => {
+const RandomNumber = ({ id, randomNum, isDisabled, onPress }) => {
   
   const handlePress = () => {
-    console.log(randomNum)
+    onPress(id)
   };
   return (
     <TouchableOpacity onPress={handlePress}>
-      <Text style={styles.random}>{randomNum}</Text>
+      <Text style={[styles.random, isDisabled && styles.selected]}>{randomNum}</Text>
     </TouchableOpacity>
 
   );
@@ -23,6 +23,9 @@ const styles = StyleSheet.create({
     fontSize: 35,
     textAlign: 'center',
   },
+  selected: {
+    opacity:  0.3,
+  }
 });
 
 export default RandomNumber;

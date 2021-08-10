@@ -1,9 +1,10 @@
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import React, {useState} from 'react';
+import {StyleSheet, Text, View} from 'react-native';
 
-import RandomNumber from './RandomNumber'
+import RandomNumber from './RandomNumber';
 
 const Game = ({randomNumberCount}) => {
+  const [selectedNumbers, setSelectedNumbers] = useState([]);
   const randomNumbers = Array.from({length: randomNumberCount}).map(
     () => 1 + Math.floor(10 * Math.random()),
   );
@@ -12,14 +13,25 @@ const Game = ({randomNumberCount}) => {
     .slice(0, randomNumberCount - 2)
     .reduce((acc, currentValue) => acc + currentValue, 0);
 
+  const isSelected = numberInd => selectedNumbers.indexOf() >=0 ;
+
+  const selectNumber = numberInd => {
+    setSelectedNumbers((prev) => [...prev, numberInd]);
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.target}>{target}</Text>
       <View style={styles.randomContainer}>
         {randomNumbers.map((randomNum, i) => (
-          <RandomNumber key={i} randomNum={randomNum} />
+          <RandomNumber
+            key={i}
+            id={i}
+            randomNum={randomNum}
+            isDisabled={isSelected(i)}
+            onPress={selectNumber}
+          />
           // <Text style={styles.random} key={i}>{num} </Text>
-          
         ))}
       </View>
     </View>
