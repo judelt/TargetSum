@@ -12,7 +12,7 @@ import {StyleSheet, Text, View} from 'react-native';
 
 const App = () => {
   return (
-    <Game/>
+    <Game randomNumberCount={ 6 }/>
   );
 };
 
