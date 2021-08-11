@@ -1,23 +1,38 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 
 import RandomNumber from './RandomNumber';
 
-const Game = ({randomNumberCount}) => {
-  const [selectedNumbers, setSelectedNumbers] = useState([]);
-  const randomNumbers = Array.from({length: randomNumberCount}).map(
-    () => 1 + Math.floor(10 * Math.random()),
-  );
+const Game = ({ randomNumbers, randomNumberCount }) => {
+  console.log('render game')
+
+  const [selectedIds, setSelectedIds] = useState([]);
 
   const target = randomNumbers
     .slice(0, randomNumberCount - 2)
     .reduce((acc, currentValue) => acc + currentValue, 0);
 
-  const isSelected = numberInd => selectedNumbers.indexOf() >=0 ;
+  const isSelected = numberInd => selectedIds.indexOf(numberInd) >= 0 ;
 
   const selectNumber = numberInd => {
-    setSelectedNumbers((prev) => [...prev, numberInd]);
+    if (!selectedIds[numberInd]) {
+      setSelectedIds((prev) => [...prev, numberInd]);
+    }  
   };
+
+  const gameStatus = () => {
+    const sumSelected = selectedIds.reduce((acc, curr) => acc + randomNumbers[curr], 0);
+    console.log(sumSelected)
+    if (sumSelected < target) {
+      return 'PLAYING';
+    }
+    if (sumSelected === target) {
+      return 'WON';
+    }
+    if (sumSelected > target) {
+      return 'LOST';
+    }
+  }
 
   return (
     <View style={styles.container}>
@@ -31,9 +46,9 @@ const Game = ({randomNumberCount}) => {
             isDisabled={isSelected(i)}
             onPress={selectNumber}
           />
-          // <Text style={styles.random} key={i}>{num} </Text>
         ))}
       </View>
+      <Text >{gameStatus()} </Text>
     </View>
   );
 };
