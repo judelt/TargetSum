@@ -3,8 +3,8 @@ import {StyleSheet, Text, View} from 'react-native';
 
 import RandomNumber from './RandomNumber';
 
-const Game = ({ randomNumbers, randomNumberCount }) => {
-  console.log('render game')
+const Game = ({randomNumbers, randomNumberCount}) => {
+  console.log('render game');
 
   const [selectedIds, setSelectedIds] = useState([]);
 
@@ -12,17 +12,20 @@ const Game = ({ randomNumbers, randomNumberCount }) => {
     .slice(0, randomNumberCount - 2)
     .reduce((acc, currentValue) => acc + currentValue, 0);
 
-  const isSelected = numberInd => selectedIds.indexOf(numberInd) >= 0 ;
+  const isSelected = numberInd => selectedIds.indexOf(numberInd) >= 0;
 
   const selectNumber = numberInd => {
     if (!selectedIds[numberInd]) {
-      setSelectedIds((prev) => [...prev, numberInd]);
-    }  
+      setSelectedIds(prev => [...prev, numberInd]);
+    }
   };
 
   const gameStatus = () => {
-    const sumSelected = selectedIds.reduce((acc, curr) => acc + randomNumbers[curr], 0);
-    console.log(sumSelected)
+    const sumSelected = selectedIds.reduce(
+      (acc, curr) => acc + randomNumbers[curr],
+      0,
+    );
+    console.log(sumSelected);
     if (sumSelected < target) {
       return 'PLAYING';
     }
@@ -32,23 +35,25 @@ const Game = ({ randomNumbers, randomNumberCount }) => {
     if (sumSelected > target) {
       return 'LOST';
     }
-  }
+  };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.target}>{target}</Text>
+      <Text style={[styles.target, styles[`STATUS_${gameStatus()}`]]}>
+        {target}
+      </Text>
       <View style={styles.randomContainer}>
         {randomNumbers.map((randomNum, i) => (
           <RandomNumber
             key={i}
             id={i}
             randomNum={randomNum}
-            isDisabled={isSelected(i)}
+            isDisabled={isSelected(i) || gameStatus() !== 'PLAYING'}
             onPress={selectNumber}
           />
         ))}
       </View>
-      <Text >{gameStatus()} </Text>
+      <Text>{gameStatus()} </Text>
     </View>
   );
 };
@@ -61,7 +66,6 @@ const styles = StyleSheet.create({
   },
   target: {
     fontSize: 50,
-    backgroundColor: '#bbb',
     margin: 50,
     textAlign: 'center',
   },
@@ -78,6 +82,15 @@ const styles = StyleSheet.create({
     marginVertical: 25,
     fontSize: 35,
     textAlign: 'center',
+  },
+  STATUS_PLAYING: {
+    backgroundColor: '#bbb',
+  },
+  STATUS_WON: {
+    backgroundColor: 'green',
+  },
+  STATUS_LOST: {
+    backgroundColor: 'red',
   },
 });
 
