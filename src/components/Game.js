@@ -3,10 +3,21 @@ import {StyleSheet, Text, View} from 'react-native';
 
 import RandomNumber from './RandomNumber';
 
-const Game = ({randomNumbers, randomNumberCount}) => {
+const Game = ({randomNumbers, randomNumberCount, initialSeconds}) => {
   console.log('render game');
 
   const [selectedIds, setSelectedIds] = useState([]);
+  const [remainingSeconds, setRemainingSeconds] = useState(initialSeconds);
+
+  useEffect(() => {
+    setTimeout(
+      clearInterval,
+      (initialSeconds + 1) * 1000,
+      setInterval(() => {
+        setRemainingSeconds(prev => prev - 1);
+      }, 1000),
+    );
+  }, []);
 
   const target = randomNumbers
     .slice(0, randomNumberCount - 2)
@@ -25,16 +36,18 @@ const Game = ({randomNumbers, randomNumberCount}) => {
       (acc, curr) => acc + randomNumbers[curr],
       0,
     );
-    console.log(sumSelected);
+    if (remainingSeconds === 0 || sumSelected > target) {
+      return 'LOST';
+    }
     if (sumSelected < target) {
       return 'PLAYING';
     }
     if (sumSelected === target) {
       return 'WON';
     }
-    if (sumSelected > target) {
-      return 'LOST';
-    }
+    // if (sumSelected > target) {
+    //   return 'LOST';
+    // }
   };
 
   return (
@@ -53,7 +66,7 @@ const Game = ({randomNumbers, randomNumberCount}) => {
           />
         ))}
       </View>
-      <Text>{gameStatus()} </Text>
+      <Text style={styles.target}>{remainingSeconds} </Text>
     </View>
   );
 };
