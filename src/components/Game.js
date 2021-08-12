@@ -3,7 +3,7 @@ import {StyleSheet, Text, View} from 'react-native';
 
 import RandomNumber from './RandomNumber';
 
-const Game = ({randomNumbers, randomNumberCount, initialSeconds}) => {
+const Game = ({shuffledrandomNumbers, randomNumbers, randomNumberCount, initialSeconds}) => {
   console.log('render game');
 
   const [selectedIds, setSelectedIds] = useState([]);
@@ -26,14 +26,14 @@ const Game = ({randomNumbers, randomNumberCount, initialSeconds}) => {
   const isSelected = numberInd => selectedIds.indexOf(numberInd) >= 0;
 
   const selectNumber = numberInd => {
-    if (!selectedIds[numberInd]) {
+    if (!selectedIds.includes(numberInd)) {
       setSelectedIds(prev => [...prev, numberInd]);
     }
   };
 
   const gameStatus = () => {
     const sumSelected = selectedIds.reduce(
-      (acc, curr) => acc + randomNumbers[curr],
+      (acc, curr) => acc + shuffledrandomNumbers[curr],
       0,
     );
     if (remainingSeconds === 0 || sumSelected > target) {
@@ -45,9 +45,6 @@ const Game = ({randomNumbers, randomNumberCount, initialSeconds}) => {
     if (sumSelected === target) {
       return 'WON';
     }
-    // if (sumSelected > target) {
-    //   return 'LOST';
-    // }
   };
 
   return (
@@ -56,7 +53,7 @@ const Game = ({randomNumbers, randomNumberCount, initialSeconds}) => {
         {target}
       </Text>
       <View style={styles.randomContainer}>
-        {randomNumbers.map((randomNum, i) => (
+        {shuffledrandomNumbers.map((randomNum, i) => (
           <RandomNumber
             key={i}
             id={i}
