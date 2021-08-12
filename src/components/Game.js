@@ -1,9 +1,14 @@
 import React, {useEffect, useState} from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, Text, View, Button} from 'react-native';
 
 import RandomNumber from './RandomNumber';
 
-const Game = ({shuffledrandomNumbers, randomNumbers, randomNumberCount, initialSeconds}) => {
+const Game = ({
+  shuffledrandomNumbers,
+  randomNumbers,
+  randomNumberCount,
+  initialSeconds,
+}) => {
   console.log('render game');
 
   const [selectedIds, setSelectedIds] = useState([]);
@@ -31,7 +36,7 @@ const Game = ({shuffledrandomNumbers, randomNumbers, randomNumberCount, initialS
     }
   };
 
-  const gameStatus = () => {
+  const setGameStatus = () => {
     const sumSelected = selectedIds.reduce(
       (acc, curr) => acc + shuffledrandomNumbers[curr],
       0,
@@ -46,24 +51,35 @@ const Game = ({shuffledrandomNumbers, randomNumbers, randomNumberCount, initialS
       return 'WON';
     }
   };
+  const gameStatus = setGameStatus();
 
   return (
     <View style={styles.container}>
-      <Text style={[styles.target, styles[`STATUS_${gameStatus()}`]]}>
-        {target}
-      </Text>
-      <View style={styles.randomContainer}>
-        {shuffledrandomNumbers.map((randomNum, i) => (
-          <RandomNumber
-            key={i}
-            id={i}
-            randomNum={randomNum}
-            isDisabled={isSelected(i) || gameStatus() !== 'PLAYING'}
-            onPress={selectNumber}
-          />
-        ))}
-      </View>
-      <Text style={styles.target}>{remainingSeconds} </Text>
+      {!remainingSeconds ? (
+        <>
+          <Text style={styles.target}> {`YOU ${gameStatus}`} </Text>
+          <Button title='Play Again'></Button>
+        </>
+
+      ) : (
+        <>
+          <Text style={[styles.target, styles[`STATUS_${gameStatus}`]]}>
+            {target}
+          </Text>
+          <View style={styles.randomContainer}>
+            {shuffledrandomNumbers.map((randomNum, i) => (
+              <RandomNumber
+                key={i}
+                id={i}
+                randomNum={randomNum}
+                isDisabled={isSelected(i) || gameStatus !== 'PLAYING'}
+                onPress={selectNumber}
+              />
+            ))}
+          </View>
+          <Text style={styles.target}>{remainingSeconds} </Text>
+        </>
+      )}
     </View>
   );
 };
