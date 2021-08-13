@@ -8,20 +8,28 @@ const Game = ({
   randomNumbers,
   randomNumberCount,
   initialSeconds,
+  setRandomNumberCount,
+  onPlayAgain,
+  attempt,
+  setAttempt
+
 }) => {
   console.log('render game');
 
   const [selectedIds, setSelectedIds] = useState([]);
   const [remainingSeconds, setRemainingSeconds] = useState(initialSeconds);
+ 
 
+  let intervalId;
   useEffect(() => {
     setTimeout(
       clearInterval,
       (initialSeconds + 1) * 1000,
-      setInterval(() => {
-        setRemainingSeconds(prev => prev - 1);
-      }, 1000),
+    intervalId = setInterval(() => {
+      setRemainingSeconds((prev) => prev - 1);
+    }, 1000),
     );
+    return () => clearInterval(intervalId)
   }, []);
 
   const target = randomNumbers
@@ -53,16 +61,41 @@ const Game = ({
   };
   const gameStatus = setGameStatus();
 
+  const NextLevel = () => {
+    setLevel(prev => prev + 1);
+
+    setRandomNumberCount(prev => prev + 1);
+    // setSelectedIds([]);
+    onPlayAgain()
+
+    
+  };
+
+  const resetGame = () => {
+    // setAttempt(prev => prev + 1);
+    // setLevel(prev => prev);
+
+    // setSelectedIds([]);
+    onPlayAgain()
+
+    
+  };
+
   return (
     <View style={styles.container}>
-      {!remainingSeconds ? (
+      {gameStatus !== 'PLAYING' ? (
         <>
           <Text style={styles.target}> {`YOU ${gameStatus}`} </Text>
-          <Button title='Play Again'></Button>
+          {gameStatus === 'WON' && (
+            <Button title="Next level" onPress={NextLevel}></Button>
+          )}
+          {gameStatus === 'LOST' && (
+            <Button title="Try Again" onPress={resetGame}></Button>
+          )}
         </>
-
       ) : (
         <>
+          <Text style={styles.target}>{`Level: ${level}`}</Text>
           <Text style={[styles.target, styles[`STATUS_${gameStatus}`]]}>
             {target}
           </Text>
