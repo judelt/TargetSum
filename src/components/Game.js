@@ -11,25 +11,25 @@ const Game = ({
   setRandomNumberCount,
   onPlayAgain,
   attempt,
-  setAttempt
-
+  setAttempt,
+  level,
+  setLevel,
 }) => {
   console.log('render game');
 
   const [selectedIds, setSelectedIds] = useState([]);
   const [remainingSeconds, setRemainingSeconds] = useState(initialSeconds);
- 
 
   let intervalId;
   useEffect(() => {
     setTimeout(
       clearInterval,
       (initialSeconds + 1) * 1000,
-    intervalId = setInterval(() => {
-      setRemainingSeconds((prev) => prev - 1);
-    }, 1000),
+      (intervalId = setInterval(() => {
+        setRemainingSeconds(prev => prev - 1);
+      }, 1000)),
     );
-    return () => clearInterval(intervalId)
+    return () => clearInterval(intervalId);
   }, []);
 
   const target = randomNumbers
@@ -49,7 +49,7 @@ const Game = ({
       (acc, curr) => acc + shuffledrandomNumbers[curr],
       0,
     );
-    if (remainingSeconds === 0 || sumSelected > target) {
+    if (remainingSeconds === 0 && gameStatus === 'PLAYING' || sumSelected > target) {
       return 'LOST';
     }
     if (sumSelected < target) {
@@ -63,22 +63,14 @@ const Game = ({
 
   const NextLevel = () => {
     setLevel(prev => prev + 1);
-
     setRandomNumberCount(prev => prev + 1);
-    // setSelectedIds([]);
-    onPlayAgain()
-
-    
+    onPlayAgain();
   };
 
   const resetGame = () => {
-    // setAttempt(prev => prev + 1);
-    // setLevel(prev => prev);
-
-    // setSelectedIds([]);
-    onPlayAgain()
-
-    
+    setAttempt(prev => prev + 1);
+    setLevel(prev => prev);
+    onPlayAgain();
   };
 
   return (
@@ -87,7 +79,11 @@ const Game = ({
         <>
           <Text style={styles.target}> {`YOU ${gameStatus}`} </Text>
           {gameStatus === 'WON' && (
-            <Button title="Next level" onPress={NextLevel}></Button>
+            <>
+              <Text>{`Number of attempts ${attempt}`}</Text>
+              <Button title="Next level" onPress={NextLevel}></Button>
+            </>
+
           )}
           {gameStatus === 'LOST' && (
             <Button title="Try Again" onPress={resetGame}></Button>
